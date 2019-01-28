@@ -455,4 +455,4 @@ Demo地址: https://github.com/Seifon/FeignStubMock
 项目结构,如图：
 ![](https://github.com/Seifon/FeignStubMock/raw/master/package_tree.png)
 
-原文地址：http://www.seifon.cn/2019/01/28/Feign-Stub挡板和Mock/
+原文地址：[http://www.seifon.cn/2019/01/28/Feign-Stub挡板和Mock/](http://www.seifon.cn/2019/01/28/Feign-Stub挡板和Mock/)
