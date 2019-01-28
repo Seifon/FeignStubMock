@@ -10,7 +10,7 @@
 
 > 详细代码，已经提交到Github，希望大家能够给个star
 
-Github: https://github.com/Seifon/FeignStubMock
+Demo地址: https://github.com/Seifon/FeignStubMock
 
 ---
 
@@ -450,7 +450,7 @@ public class FeignMockAspect {
 
 详细代码，已经提交到Github，希望大家能够给个star
 
-Github: https://github.com/Seifon/FeignStubMock
+Demo地址: https://github.com/Seifon/FeignStubMock
 
 项目结构,如图：
 ![](https://github.com/Seifon/FeignStubMock/raw/master/package_tree.png)
