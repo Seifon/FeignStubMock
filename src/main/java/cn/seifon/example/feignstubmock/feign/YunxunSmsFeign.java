@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * @Author: Xiongfeng
+ * @Author: Seifon
  * @Description:
- * @Date: Created in  2019/1/22
+ * @Date: Created in 10:24 2019/1/7
  */
 @FeignClient(url = "${sms.url}", primary = false, name = "smsclient")
 public interface YunxunSmsFeign {

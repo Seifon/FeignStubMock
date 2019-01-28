@@ -7,14 +7,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**
- * @Author: XiongFeng
+ * @Author: Seifon
  * @Description:
- * @Date: Created in  2018/5/25
+ * @Date: Created in 10:24 2019/1/7
  */
 @Primary //注意：需要在原Feign接口@FeignClient注解加入primary = false 属性
 @Component
 @ConditionalOnProperty(name = "feign-stub.yunxun.sms.mode", havingValue = "mock")
-@FeignClient(name = "fs-core", url = "${feign-stub.yunxun.sms.mode.url}" ,path = "/")
+@FeignClient(name = "sms", url = "${feign-stub.yunxun.sms.mode.url}" ,path = "/")
 public interface YunxunSmsFeignMock extends YunxunSmsFeign {
 
 }

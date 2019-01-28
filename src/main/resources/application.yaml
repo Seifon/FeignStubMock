@@ -5,8 +5,16 @@ sms:
     url: http://smssh1.253.com/msg/variable/json
 
 #生产环境请勿添加此配置。mode说明：''-不开启, 'mock'-mock模式, 'stub'-stub模式。url说明：只有mock模式需要配置调试url。fund为第三方机构，repayment是业务名称
+#yunxun：代表第三方系统名称，sms：代表业务名称，mode:代表Stub模式，url：代表mock服务地址
 feign-stub:
     yunxun:
         sms:
             mode: 'stub'
             url: "http://localhost:1240"
+
+logging:
+    level:
+        cn:
+            seifon:
+                example:
+                    feignstubmock: debug

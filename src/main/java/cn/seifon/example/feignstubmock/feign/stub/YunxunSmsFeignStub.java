@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
- * @Author: XiongFeng
+ * @Author: Seifon
  * @Description:
  * @Date: Created in 10:24 2019/1/7
  */
@@ -28,6 +28,8 @@ public class YunxunSmsFeignStub implements YunxunSmsFeign {
     @Override
     public YunxunSmsRespDto send(YunxunSmsReqDto request) {
         YunxunSmsRespDto yunxunSmsRespDto = new YunxunSmsRespDto();
+
+        //模拟正常响应结果
         yunxunSmsRespDto.setCode("0");
         yunxunSmsRespDto.setFailNum("0");
         yunxunSmsRespDto.setSuccessNum("1");
@@ -38,6 +40,7 @@ public class YunxunSmsFeignStub implements YunxunSmsFeign {
         String params = request.getParams();
         String[] paramSplit = StringUtils.split(params, ",");
         if (paramSplit[0].length() != 11) {
+            //模拟错误响应结果
             yunxunSmsRespDto.setCode("107");
             yunxunSmsRespDto.setMsgId("");
             yunxunSmsRespDto.setErrorMsg("手机号码格式错误");
