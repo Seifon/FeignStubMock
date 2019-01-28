@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Primary //注意：需要在原Feign接口@FeignClient注解加入primary = false 属性
 @Component
 @ConditionalOnProperty(name = "feign-stub.yunxun.sms.mode", havingValue = "mock")
-@FeignClient(name = "sms", url = "${feign-stub.yunxun.sms.mode.url}" ,path = "/")
+@FeignClient(name = "smsclient", url = "${feign-stub.yunxun.sms.mockUrl}" ,path = "/")
 public interface YunxunSmsFeignMock extends YunxunSmsFeign {
 
 }

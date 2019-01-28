@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @Description:
  * @Date: Created in 10:24 2019/1/7
  */
-@FeignClient(url = "${sms.url}", primary = false, name = "smsclient")
+@FeignClient(name = "smsclient", url = "${sms.url}", primary = false)
 public interface YunxunSmsFeign {
 
     /**
