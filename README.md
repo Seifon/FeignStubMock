@@ -2,7 +2,7 @@
 
 在项目开发中，很多时候都会与第三方接口对接，然而在联调时他们的服务经常会出现不稳定，或者按调用次数收费。如果我们定义一个挡板或者mock服务，在发起调用时，不直接调到第三方接口，而是调到我们自己的挡板代码或者mock服务，这样就可以避免这些问题了。
 
-详细代码，我已经提交到Github，希望大家能够给个star
+详细代码，已经提交到Github，希望大家能够给个star
 
 ```
 https://github.com/Seifon/FeignStubMock
@@ -13,6 +13,8 @@ https://github.com/Seifon/FeignStubMock
 - 挡板代码，不需要侵入业务代码，可以根据入参做一些动态结果返回
 - 不需要专门开发一个挡板服务，并且在每次启动客户端都先启动挡板服务
 - 可以自由选择使用挡板还是Mock数据
+
+---
 
 #### 一、下面我就以一个第三方SMS接口来做演示：
 
@@ -129,6 +131,8 @@ public class FeignStubMockApplicationTests {
 ```
 
 当我们知道了两种情况下出现的结果，那么我们就可以模拟响应结果啦。
+
+---
 
 #### 二、接下来进入挡板编写环节：
 
@@ -265,6 +269,8 @@ public class FeignStubAspect {
 
 以上就完成了一个stub挡板功能，可有时候，我们有第三方接口的返回报文，并不想去写一段Stub代码。那么这个时候，我们就可以选择Mock方式去完成我们的功能啦。
 
+---
+
 #### 三、接下来进入Mock环节：
 
 ##### 1. 首先准备一个mock服务，这里我就用自己比较喜欢的一个mock工具（mock-json-server）给大家演示：
@@ -282,7 +288,7 @@ public class FeignStubAspect {
 npm install -g mock-json-server
 ```
 
-###### 1.3 准备mock数据文件(命名为：data.json)：
+###### 1.3 新建mock数据文件(命名为：data.json)：
 
 ```
 {
@@ -307,14 +313,14 @@ mock-json-server {path}/data.json --port=1240
 {path}替换为存放data.json的绝对路径
 ```
 
-###### 1.5 如果出现如下结果就代表mock服务运行成功：
+###### 1.5 如果显示如下结果，就代表mock服务运行成功：
 
 ```
 JSON Server running at http://localhost:1240/
 ```
 
 
-参考mock-json-server更多资料：https://www.npmjs.com/package/mock-json-server
+> mock-json-server具体使用文档，请参考：https://www.npmjs.com/package/mock-json-server
 
 
 
@@ -347,7 +353,7 @@ public interface YunxunSmsFeignMock extends YunxunSmsFeign {
 注意：必须标注@Primary注解。@FeignClient里的name属性不能跟原Feign接口名称相同，如果相同会启动报错。@ConditionalOnProperty的作用就是根据application.yaml配置的相关属性，判断是否注入Spring容器
 
 
-###### 2.2 
+###### 2.2 application.yaml文件，加入下面的配置：
 ```
 sms:
     url: 'http://smssh1.253.com'
@@ -438,9 +444,14 @@ public class FeignMockAspect {
 目录结构,如图：
 ![](https://github.com/Seifon/FeignStubMock/raw/master/package_tree.png)
 
+---
+
 #### 四、结语：
 
-详细代码，我已经提交到Github，希望大家能够给个star
+如果有什么需要改进的地方，或者不正确的地方，请在评论里面指正，非常感谢！
+
+
+详细代码，已经提交到Github，希望大家能够给个star
 
 ```
 https://github.com/Seifon/FeignStubMock
