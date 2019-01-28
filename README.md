@@ -1,16 +1,24 @@
-背景：我们在开发项目时，很多时候都会与第三方接口对接，然而他们的服务经常会出现不稳定，或者按调用次数收费。如果我们定义一个挡板或者mock服务，不直接调到服务提供商接口，就可以避免这个问题。
+#### 背景：
 
-优势：
+在项目开发中，很多时候都会与第三方接口对接，然而在联调时他们的服务经常会出现不稳定，或者按调用次数收费。如果我们定义一个挡板或者mock服务，在发起调用时，不直接调到第三方接口，而是调到我们自己的挡板代码或者mock服务，这样就可以避免这些问题了。
 
-- 挡板代码，不需要侵入业务代码
-- 不需要专门写一个挡板服务，并且在每次启动客户端都先启动挡板服务
+详细代码，我已经提交到Github，希望大家能够给个star
+
+```
+https://github.com/Seifon/FeignStubMock
+```
+
+> 优势：
+
+- 挡板代码，不需要侵入业务代码，可以根据入参做一些动态结果返回
+- 不需要专门开发一个挡板服务，并且在每次启动客户端都先启动挡板服务
 - 可以自由选择使用挡板还是Mock数据
 
-下面我就以一个SMS接口来做演示：
+#### 一、下面我就以一个第三方SMS接口来做演示：
 
 首先，我们写一个Feign客户端接口，正常调用第三方接口：
 
-1.定义一个SMS的Feign服务：
+##### 1.定义一个SMS的Feign服务：
 
 
 ```
@@ -42,7 +50,7 @@ public interface YunxunSmsFeign {
 
 注意：@FeignClient注解里面的primary属性一定要设置为false,这是为了防止在开启Feign挡板时，出现多个Feign客户端导致启动报错。
 
-2.写一个单元测试：
+##### 2.写一个单元测试：
 
 ```
 import cn.seifon.example.feignstubmock.dto.YunxunSmsReqDto;
@@ -79,7 +87,7 @@ public class FeignStubMockApplicationTests {
 }
 ```
 
-我们输入一个正确的手机号，拿一个成功的结果：
+###### 3.1.我们输入一个正确的手机号，拿一个成功的结果：
 
 ```
 2019-01-28 11:17:56.718 DEBUG 6920 --- [           main] c.s.e.f.feign.YunxunSmsFeign             : [YunxunSmsFeign#send] ---> POST http://smssh1.253.com/msg/variable/json HTTP/1.1
@@ -100,7 +108,7 @@ public class FeignStubMockApplicationTests {
 ```
 
 
-我们输入一个错误的手机号，拿一个失败的结果：
+###### 3.2.我们输入一个错误的手机号，拿一个失败的结果：
 
 ```
 2019-01-28 11:21:15.300 DEBUG 5288 --- [           main] c.s.e.f.feign.YunxunSmsFeign             : [YunxunSmsFeign#send] ---> POST http://smssh1.253.com/msg/variable/json HTTP/1.1
@@ -122,9 +130,9 @@ public class FeignStubMockApplicationTests {
 
 当我们知道了两种情况下出现的结果，那么我们就可以模拟响应结果啦。
 
-接下来进入挡板编写环节：
+#### 二、接下来进入挡板编写环节：
 
-编写一个YunxunSmsFeignStub类，去实现YunxunSmsFeign接口：
+##### 1.编写一个YunxunSmsFeignStub类，去实现YunxunSmsFeign接口：
 
 ```
 import cn.seifon.example.feignstubmock.dto.YunxunSmsReqDto;
@@ -179,7 +187,7 @@ public class YunxunSmsFeignStub implements YunxunSmsFeign {
 
 注意：必须标注@Primary注解。@ConditionalOnProperty的作用就是根据application.yaml配置的相关属性，判断是否注入Spring容器
 
-application.yaml文件，加入下面的配置：
+##### 2.application.yaml文件，加入下面的配置：
 
 ```
 sms:
@@ -192,7 +200,7 @@ feign-stub:
             mode: 'stub'
 ```
 
-为了区分返回的内容是挡板结果，我们可以写一个AOP切面打印日志：
+##### 3.为了区分返回的内容是挡板结果，我们可以写一个AOP切面打印日志：
 
 
 ```
@@ -239,7 +247,7 @@ public class FeignStubAspect {
 
 ```
 
-运行之前写的单元测试代码（输入一个正确的手机号）：
+###### 4.1.运行之前写的单元测试代码（输入一个正确的手机号）：
 
 ```
 2019-01-28 11:32:51.255  INFO 7488 --- [           main] c.s.e.f.aspect.FeignStubAspect           : -----【cn.seifon.example.feignstubmock.feign.stub.YunxunSmsFeignStub.send】---- 进入挡板模式... request: 【[{"msg":"登录验证码:{$var}，请不要对非本人透露。","password":"XXXXXXX","report":"true","params":"13011112222,123456","account":"XXXXXXX"}]】
@@ -247,7 +255,7 @@ public class FeignStubAspect {
 {"code":"0","failNum":"0","successNum":"1","msgId":"19148964234899564","time":"20190128113251","errorMsg":""}
 ```
 
-运行之前写的单元测试代码（输入一个错误的手机号）：
+###### 4.2.运行之前写的单元测试代码（输入一个错误的手机号）：
 
 ```
 2019-01-28 11:35:27.177  INFO 15204 --- [           main] c.s.e.f.aspect.FeignStubAspect           : -----【cn.seifon.example.feignstubmock.feign.stub.YunxunSmsFeignStub】---- 进入挡板模式... request: 【[{"msg":"登录验证码:{$var}，请不要对非本人透露。","password":"XXXXXXX","report":"true","params":"130,123456","account":"XXXXXXX"}]】
@@ -257,22 +265,24 @@ public class FeignStubAspect {
 
 以上就完成了一个stub挡板功能，可有时候，我们有第三方接口的返回报文，并不想去写一段Stub代码。那么这个时候，我们就可以选择Mock方式去完成我们的功能啦。
 
-首先准备一个mock服务，这里我就用自己比较喜欢的一个mock工具（mock-json-server）给大家演示：
+#### 三、接下来进入Mock环节：
 
-安装nodejs：
+##### 1. 首先准备一个mock服务，这里我就用自己比较喜欢的一个mock工具（mock-json-server）给大家演示：
+
+###### 1.1 安装nodejs：
 
 
 ```
 参看官网：http://nodejs.cn/
 ```
 
-安装mock-json-server：
+###### 1.2 安装mock-json-server：
 
 ```
 npm install -g mock-json-server
 ```
 
-准备mock数据文件(命名为：data.json)：
+###### 1.3 准备mock数据文件(命名为：data.json)：
 
 ```
 {
@@ -289,7 +299,7 @@ npm install -g mock-json-server
 }
 ```
 
-运行：
+###### 1.4 运行：
 
 ```
 mock-json-server {path}/data.json --port=1240
@@ -297,7 +307,7 @@ mock-json-server {path}/data.json --port=1240
 {path}替换为存放data.json的绝对路径
 ```
 
-如果出现如下结果就代表mock服务运行成功：
+###### 1.5 如果出现如下结果就代表mock服务运行成功：
 
 ```
 JSON Server running at http://localhost:1240/
@@ -309,9 +319,9 @@ JSON Server running at http://localhost:1240/
 
 
 
-准备工作做好后，接下来，就进入Mock正式环节：
+##### 2. 准备工作做好后，接下来，就进入Mock正式环节：
 
-首先，我们定义一个YunxunSmsFeignMock接口，并且继承YunxunSmsFeign接口
+###### 2.1 首先，我们定义一个YunxunSmsFeignMock接口，并且继承YunxunSmsFeign接口
 ```
 import cn.seifon.example.feignstubmock.feign.YunxunSmsFeign;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -337,6 +347,7 @@ public interface YunxunSmsFeignMock extends YunxunSmsFeign {
 注意：必须标注@Primary注解。@FeignClient里的name属性不能跟原Feign接口名称相同，如果相同会启动报错。@ConditionalOnProperty的作用就是根据application.yaml配置的相关属性，判断是否注入Spring容器
 
 
+###### 2.2 
 ```
 sms:
     url: 'http://smssh1.253.com'
@@ -350,8 +361,7 @@ feign-stub:
             mockUrl: "http://localhost:1240"
 ```
 
-为了区分返回的内容是Mock结果，我们可以写一个AOP切面打印日志：
-
+###### 2.3 为了区分返回的内容是Mock结果，我们可以写一个AOP切面打印日志：
 
 ```
 import com.alibaba.fastjson.JSON;
@@ -397,7 +407,7 @@ public class FeignMockAspect {
 ```
 
 
-运行之前的单元测试类，得到如下结果：
+###### 2.4 运行之前的单元测试类，得到如下结果：
 
 ```
 2019-01-28 16:16:35.567  INFO 8976 --- [           main] c.s.e.f.aspect.FeignMockAspect           : -----【com.sun.proxy.$Proxy95.send】---- 进入Mock模式... request: 【[{"msg":"登录验证码:{$var}，请不要对非本人透露。","password":"XXXXXXX","report":"true","params":"13011112222,123456","account":"XXXXXXX"}]】
@@ -425,8 +435,13 @@ public class FeignMockAspect {
 
 说明：此时我们根据日志，会发现feign调用的url已经变为我们Mock服务地址了。同理，如果要返回失败结果，只需要修改data.json文件，即可返回我们想要的结果了。
 
+目录结构,如图：
+![](https://github.com/Seifon/FeignStubMock/raw/master/package_tree.png)
 
-结语：
+#### 四、结语：
 
 详细代码，我已经提交到Github，希望大家能够给个star
 
+```
+https://github.com/Seifon/FeignStubMock
+```
