@@ -4,9 +4,7 @@
 
 详细代码，已经提交到Github，希望大家能够给个star
 
-```
-https://github.com/Seifon/FeignStubMock
-```
+Github: https://github.com/Seifon/FeignStubMock
 
 > 优势：
 
@@ -453,6 +451,4 @@ public class FeignMockAspect {
 
 详细代码，已经提交到Github，希望大家能够给个star
 
-```
-https://github.com/Seifon/FeignStubMock
-```
+Github: https://github.com/Seifon/FeignStubMock
