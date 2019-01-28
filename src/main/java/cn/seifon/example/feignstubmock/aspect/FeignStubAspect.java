@@ -1,6 +1,7 @@
 package cn.seifon.example.feignstubmock.aspect;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -25,7 +26,7 @@ public class FeignStubAspect {
 
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint pjp){
-        String name = pjp.getTarget().getClass().getName();
+        String name = StringUtils.join(pjp.getTarget().getClass().getName(), ".", pjp.getSignature().getName());
         LOG.info("-----【{}】---- 进入挡板模式... request: 【{}】", name, JSON.toJSON(pjp.getArgs()));
         try {
             Object proceed = pjp.proceed();
