@@ -8,7 +8,7 @@
 - 不需要专门开发一个挡板服务，并且在每次启动客户端都先启动挡板服务
 - 可以自由选择使用挡板还是Mock数据
 
-> 详细Demo代码，已经提交到Github，欢迎star
+> Demo详细代码，已经提交到Github，欢迎star
 
 Demo地址: https://github.com/Seifon/FeignStubMock
 
@@ -448,9 +448,11 @@ public class FeignMockAspect {
 如果有什么需要改进的地方，或者不正确的地方，请在评论里面提出并指正。谢谢！
 
 
-> 详细Demo代码，已经提交到Github，欢迎star
+> Demo详细代码，已经提交到Github，欢迎star
 
 Demo地址: https://github.com/Seifon/FeignStubMock
 
 项目结构,如图：
 ![](https://github.com/Seifon/FeignStubMock/raw/master/package_tree.png)
+
+原文地址：http://www.seifon.cn/2019/01/28/Feign-Stub挡板和Mock/
