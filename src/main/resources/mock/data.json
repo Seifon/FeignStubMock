@@ -1,0 +1,12 @@
+{
+  "/msg/variable/json": {
+    "post": {
+      "code":"0",
+      "failNum":"0",
+      "successNum":"1",
+      "msgId":"19012516213625881",
+      "time":"20190125162136",
+      "errorMsg":""
+    }
+  }
+}

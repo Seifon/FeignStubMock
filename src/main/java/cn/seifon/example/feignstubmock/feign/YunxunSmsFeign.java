@@ -20,6 +20,6 @@ public interface YunxunSmsFeign {
      * @return {"code":"0","failNum":"0","successNum":"1","msgId":"19012516213625881","time":"20190125162136","errorMsg":""}
      * @return {"code":"107","msgId":"","time":"20190125162358","errorMsg":"手机号码格式错误"}
      */
-    @PostMapping
+    @PostMapping("/msg/variable/json")
     YunxunSmsRespDto send(@RequestBody YunxunSmsReqDto request);
 }
