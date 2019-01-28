@@ -1,10 +1,6 @@
 #### 背景：
 
-在项目开发中，很多时候都会与第三方接口对接，然而在联调时他们的服务经常会出现不稳定，或者按调用次数收费。如果我们定义一个挡板或者mock服务，在发起调用时，不直接调到第三方接口，而是调到我们自己的挡板代码或者mock服务，这样就可以避免这些问题了。
-
-详细代码，已经提交到Github，希望大家能够给个star
-
-Github: https://github.com/Seifon/FeignStubMock
+在项目开发中，会有调用第三方接口的场景。当开发时，对方不愿意提供服务器给我们调用测试，或者有的接口会按调用次数进行计费。当联调时，第三方的服务也可能会出现不稳定，如果他们的服务挂了，我们就等着服务恢复，那么这就相当影响效率了。如果我们定义一个挡板或者mock服务，在发起调用时，不直接调到第三方接口，而是调到我们自己的挡板代码或者mock服务，这样就可以避免这些问题了。
 
 > 优势：
 
@@ -12,13 +8,17 @@ Github: https://github.com/Seifon/FeignStubMock
 - 不需要专门开发一个挡板服务，并且在每次启动客户端都先启动挡板服务
 - 可以自由选择使用挡板还是Mock数据
 
+> 详细代码，已经提交到Github，希望大家能够给个star
+
+Github: https://github.com/Seifon/FeignStubMock
+
 ---
 
-#### 一、下面我就以一个第三方SMS接口来做演示：
+#### 一、下面我就以一个第三方SMS短信接口来做演示：
 
 首先，我们写一个Feign客户端接口，正常调用第三方接口：
 
-##### 1.定义一个SMS的Feign服务：
+##### 1.定义一个SMS短信的Feign客户端接口：
 
 
 ```
@@ -48,7 +48,7 @@ public interface YunxunSmsFeign {
 
 ```
 
-注意：@FeignClient注解里面的primary属性一定要设置为false,这是为了防止在开启Feign挡板时，出现多个Feign客户端导致启动报错。
+> 注意：@FeignClient注解里面的primary属性一定要设置为false,这是为了防止在开启Feign挡板时，出现多个Feign客户端导致启动报错。
 
 ##### 2.写一个单元测试：
 
@@ -107,6 +107,8 @@ public class FeignStubMockApplicationTests {
 {"code":"0","failNum":"0","successNum":"1","msgId":"19012811175621982","time":"20190128111756","errorMsg":""}
 ```
 
+此时，我们可以根据日志，看到请求的地址也是第三方的url
+
 
 ###### 3.2.我们输入一个错误的手机号，拿一个失败的结果：
 
@@ -128,13 +130,13 @@ public class FeignStubMockApplicationTests {
 {"code":"107","msgId":"","time":"20190128112115","errorMsg":"手机号码格式错误"}
 ```
 
-当我们知道了两种情况下出现的结果，那么我们就可以模拟响应结果啦。
+当我们知道了两种情况下出现的结果，那么我们就可以模拟响应结果啦。小技巧：我们可以先跟对方调接口，把各种响应报文保存下来，方便后面直接mock数据
 
 ---
 
 #### 二、接下来进入挡板编写环节：
 
-##### 1.编写一个YunxunSmsFeignStub类，去实现YunxunSmsFeign接口：
+##### 1.编写一个YunxunSmsFeignStub类，并实现YunxunSmsFeign接口：
 
 ```
 import cn.seifon.example.feignstubmock.dto.YunxunSmsReqDto;
@@ -187,7 +189,7 @@ public class YunxunSmsFeignStub implements YunxunSmsFeign {
 }
 ```
 
-注意：必须标注@Primary注解。@ConditionalOnProperty的作用就是根据application.yaml配置的相关属性，判断是否注入Spring容器
+> 注意：必须标注@Primary注解,否则启动会报错。@ConditionalOnProperty的作用就是根据application.yaml配置的相关属性，判断是否注入Spring容器
 
 ##### 2.application.yaml文件，加入下面的配置：
 
@@ -260,12 +262,12 @@ public class FeignStubAspect {
 ###### 4.2.运行之前写的单元测试代码（输入一个错误的手机号）：
 
 ```
-2019-01-28 11:35:27.177  INFO 15204 --- [           main] c.s.e.f.aspect.FeignStubAspect           : -----【cn.seifon.example.feignstubmock.feign.stub.YunxunSmsFeignStub】---- 进入挡板模式... request: 【[{"msg":"登录验证码:{$var}，请不要对非本人透露。","password":"XXXXXXX","report":"true","params":"130,123456","account":"XXXXXXX"}]】
-2019-01-28 11:35:27.900  INFO 15204 --- [           main] c.s.e.f.aspect.FeignStubAspect           : -----【cn.seifon.example.feignstubmock.feign.stub.YunxunSmsFeignStub】---- 退出挡板模式... request: 【[{"msg":"登录验证码:{$var}，请不要对非本人透露。","password":"XXXXXXX","report":"true","params":"130,123456","account":"XXXXXXX"}]】, response: 【{"code":"107","failNum":"0","successNum":"1","msgId":"","time":"20190128113527","errorMsg":"手机号码格式错误"}】
+2019-01-28 11:35:27.177  INFO 15204 --- [           main] c.s.e.f.aspect.FeignStubAspect           : -----【cn.seifon.example.feignstubmock.feign.stub.YunxunSmsFeignStub.send】---- 进入挡板模式... request: 【[{"msg":"登录验证码:{$var}，请不要对非本人透露。","password":"XXXXXXX","report":"true","params":"130,123456","account":"XXXXXXX"}]】
+2019-01-28 11:35:27.900  INFO 15204 --- [           main] c.s.e.f.aspect.FeignStubAspect           : -----【cn.seifon.example.feignstubmock.feign.stub.YunxunSmsFeignStub.send】---- 退出挡板模式... request: 【[{"msg":"登录验证码:{$var}，请不要对非本人透露。","password":"XXXXXXX","report":"true","params":"130,123456","account":"XXXXXXX"}]】, response: 【{"code":"107","failNum":"0","successNum":"1","msgId":"","time":"20190128113527","errorMsg":"手机号码格式错误"}】
 {"code":"107","failNum":"0","successNum":"1","msgId":"","time":"20190128113527","errorMsg":"手机号码格式错误"}
 ```
 
-以上就完成了一个stub挡板功能，可有时候，我们有第三方接口的返回报文，并不想去写一段Stub代码。那么这个时候，我们就可以选择Mock方式去完成我们的功能啦。
+以上代码就完成了一个stub挡板功能，可有时候，我们已经拿到第三方接口的返回报文，并切不想去写一大段Stub代码。那么这个时候，我们就可以选择下面的Mock方式去完成我们的功能。
 
 ---
 
@@ -348,7 +350,7 @@ public interface YunxunSmsFeignMock extends YunxunSmsFeign {
 
 ```
 
-注意：必须标注@Primary注解。@FeignClient里的name属性不能跟原Feign接口名称相同，如果相同会启动报错。@ConditionalOnProperty的作用就是根据application.yaml配置的相关属性，判断是否注入Spring容器
+注意：必须标注@Primary注解，否则启动时会报错。@FeignClient里的name属性不能跟原Feign接口名称相同，如果相同会启动报错。@ConditionalOnProperty的作用就是根据application.yaml配置的相关属性，判断是否注入Spring容器
 
 
 ###### 2.2 application.yaml文件，加入下面的配置：
@@ -437,18 +439,18 @@ public class FeignMockAspect {
 {"code":"0","failNum":"0","successNum":"1","msgId":"19012516213625881","time":"20190125162136","errorMsg":""}
 ```
 
-说明：此时我们根据日志，会发现feign调用的url已经变为我们Mock服务地址了。同理，如果要返回失败结果，只需要修改data.json文件，即可返回我们想要的结果了。
-
-目录结构,如图：
-![](https://github.com/Seifon/FeignStubMock/raw/master/package_tree.png)
+说明：此时我们根据日志，会发现feign调用的url已经变为我们的Mock服务地址了。同理，如果要返回失败结果，只需要修改data.json文件，再次调用后，即可得到我们想要的结果了。
 
 ---
 
 #### 四、结语：
 
-如果有什么需要改进的地方，或者不正确的地方，请在评论里面指正，非常感谢！
+如果有什么需要改进的地方，或者不正确的地方，请在评论里面提出并指正。谢谢！
 
 
 详细代码，已经提交到Github，希望大家能够给个star
 
 Github: https://github.com/Seifon/FeignStubMock
+
+项目结构,如图：
+![](https://github.com/Seifon/FeignStubMock/raw/master/package_tree.png)
