@@ -396,7 +396,7 @@ public class FeignMockAspect {
 
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint pjp){
-        String name = StringUtils.join(pjp.getTarget().getClass().getName(), ".", pjp.getSignature().getName());
+        String name = StringUtils.join(pjp.getSignature().getDeclaringTypeName(),".", pjp.getSignature().getName());
         LOG.info("-----【{}】---- 进入Mock模式... request: 【{}】", name, JSON.toJSON(pjp.getArgs()));
         try {
             Object proceed = pjp.proceed();
